@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/wallpaper.dart';
+import '../widgets/animated_message.dart';
 import '../services/image_download_service.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -85,72 +86,19 @@ class _DetailScreenState extends State<DetailScreen> {
     bool isSuccess = true,
   }) {
     final overlay = Overlay.of(context);
-
     final overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        bottom: 80,
-        left: 20,
-        right: 20,
-        child: TweenAnimationBuilder(
-          tween: Tween<double>(begin: 0, end: 1),
-          duration: const Duration(milliseconds: 300),
-          builder: (context, value, child) {
-            return Transform.scale(
-              scale: value,
-              child: Material(
-                elevation: 6,
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSuccess ? Colors.green : Colors.red,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    message,
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
+      builder: (context) => AnimatedMessage(
+        message: message,
+        isSuccess: isSuccess,
       ),
     );
 
     overlay.insert(overlayEntry);
-
     Future.delayed(
       const Duration(seconds: 2),
-      () {
-        if (overlayEntry.mounted) {
-          overlayEntry.remove();
-        }
-      },
+      () => overlayEntry.remove(),
     );
   }
-
-  @override
-  void initState() {
-    super.initState();
-
-    favoritesBox = Hive.box('favorites');
-    _checkIfFavorite();
-  }
-
-  void _checkIfFavorite() {
-    final id = widget.photo.id.toString();
-
-    setState(() {
-      isFavorite = favoritesBox.containsKey(id);
-    });
-  }
-
   void _toggleFavorite() {
     final id = widget.photo.id.toString();
 
@@ -580,6 +528,9 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
+
+
+
 
 
 
