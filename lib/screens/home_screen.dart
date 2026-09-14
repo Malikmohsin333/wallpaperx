@@ -507,19 +507,48 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  void _onCategoryTap(String category) {
+  Future<void> _onCategoryTap(String category) async {
     if (isConnected) {
       setState(() {
-        currentCategory = category; // ← YEH LINE ADD KARO
+        currentCategory = category;
+        isLoading = true;
+        isLoadingMore = false;
+        errorMessage = null;
       });
-      fetchWallpapers(category: category, reset: true);
+
+      await wallpaperProvider.loadWallpapers(
+        category: category,
+        refresh: true,
+      );
+
+      if (mounted) {
+        setState(() {
+          wallpapers = wallpaperProvider.wallpapers
+              .map(
+                (wallpaper) => {
+                  'id': wallpaper.id,
+                  'photographer': wallpaper.photographer,
+                  'src': {
+                    'original': wallpaper.originalUrl,
+                    'large': wallpaper.largeUrl,
+                    'medium': wallpaper.mediumUrl,
+                    'portrait': wallpaper.portraitUrl,
+                  },
+                },
+              )
+              .toList();
+          isLoading = wallpaperProvider.isLoading;
+          hasMore = wallpaperProvider.hasMore;
+          errorMessage = wallpaperProvider.error;
+          isConnected = wallpaperProvider.error == null;
+        });
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No internet connection')),
       );
     }
   }
-
   void _showSettingsMenu() {
     showModalBottomSheet(
       context: context,
@@ -1182,6 +1211,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
