@@ -21,7 +21,8 @@ class WallpaperProvider extends ChangeNotifier {
 
   String? get error => _error;
 
-  Future<void> loadWallpapers({
+    Future<void> loadWallpapers({
+    String category = 'Curated',
     bool refresh = false,
   }) async {
     if (_isLoading) return;
@@ -39,16 +40,24 @@ class WallpaperProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final newWallpapers = await _apiService.getCuratedWallpapers(
+      final newWallpapers = await _apiService.getWallpapers(
+        category: category,
         page: _currentPage,
-        perPage: 20,
+        perPage: 15,
       );
 
       if (newWallpapers.isEmpty) {
         _hasMore = false;
       } else {
-        _wallpapers.addAll(newWallpapers);
+        final existingIds = _wallpapers.map((wallpaper) => wallpaper.id).toSet();
+
+        final uniqueWallpapers = newWallpapers
+            .where((wallpaper) => !existingIds.contains(wallpaper.id))
+            .toList();
+
+        _wallpapers.addAll(uniqueWallpapers);
         _currentPage++;
+        _hasMore = newWallpapers.isNotEmpty;
       }
     } catch (e) {
       _error = 'Failed to load wallpapers';
