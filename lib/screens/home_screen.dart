@@ -341,7 +341,28 @@ class _HomeScreenState extends State<HomeScreen>
         category: currentCategory,
         refresh: true,
       );
-    }
+
+      if (mounted) {
+        setState(() {
+          wallpapers = wallpaperProvider.wallpapers
+              .map(
+                (wallpaper) => {
+                  'id': wallpaper.id,
+                  'photographer': wallpaper.photographer,
+                  'src': {
+                    'original': wallpaper.originalUrl,
+                    'large': wallpaper.largeUrl,
+                    'medium': wallpaper.mediumUrl,
+                    'portrait': wallpaper.portraitUrl,
+                  },
+                },
+              )
+              .toList();
+          isLoading = wallpaperProvider.isLoading;
+          hasMore = wallpaperProvider.hasMore;
+          errorMessage = wallpaperProvider.error;
+        });
+      }    }
   }
 
   void _onScroll() {
@@ -1136,3 +1157,5 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
