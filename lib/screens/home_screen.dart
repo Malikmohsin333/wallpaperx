@@ -337,7 +337,10 @@ class _HomeScreenState extends State<HomeScreen>
       setState(() {
         isConnected = true;
       });
-      fetchWallpapers();
+      await wallpaperProvider.loadWallpapers(
+        category: currentCategory,
+        refresh: true,
+      );
     }
   }
 
