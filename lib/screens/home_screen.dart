@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/wallpaper.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -34,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen>
   bool isLoadingMore = false;
   String? errorMessage;
   String currentCategory = "Curated";
-  int currentPage = 1;
   bool hasMore = true;
   bool isConnected = true;
   int downloadCount = 0;
@@ -48,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen>
   bool get isDarkMode =>
       Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
-  final String apiKey = dotenv.env['PEXELS_API_KEY'] ?? '';
 
   final List<Map<String, dynamic>> mainCategories = [
     {'name': 'Curated', 'icon': Icons.trending_up, 'color': 0xFF6366F1},
@@ -1138,6 +1135,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
