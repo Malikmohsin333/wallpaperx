@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'detail_screen.dart';
+import '../models/wallpaper.dart';
 
 class SearchResultsScreen extends StatefulWidget {
   final String searchQuery;
@@ -18,7 +19,7 @@ class SearchResultsScreen extends StatefulWidget {
 }
 
 class _SearchResultsScreenState extends State<SearchResultsScreen> {
-  List<dynamic> results = [];
+  List<Wallpaper> results = [];
   bool isLoading = true;
   bool isLoadingMore = false;
   String? errorMessage;
@@ -81,8 +82,13 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       );
 
       if (mounted) {
-        final newResults = response.data['photos'] as List;
-
+        final newResults = (response.data['photos'] as List)
+            .map(
+              (photo) => Wallpaper.fromJson(
+                photo as Map<String, dynamic>,
+              ),
+            )
+            .toList();
         setState(() {
           if (reset) {
             results = newResults;
@@ -235,8 +241,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           );
         }
 
-        final photo = results[index];
-        final String imageUrl = photo['src']['medium'];
+        final wallpaper = results[index];
+        final String imageUrl = wallpaper.mediumUrl;
 
         return GestureDetector(
           onTap: () {
@@ -244,7 +250,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation, secondaryAnimation) =>
-                    DetailScreen(photo: photo),
+                    DetailScreen(photo: wallpaper),
                 transitionsBuilder: (
                   context,
                   animation,
@@ -351,3 +357,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
     );
   }
 }
+
+
+
+
