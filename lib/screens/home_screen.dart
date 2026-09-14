@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -47,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen>
   bool get isDarkMode =>
       Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
-  final Dio _dio = Dio();
   final String apiKey = dotenv.env['PEXELS_API_KEY'] ?? '';
 
   final List<Map<String, dynamic>> mainCategories = [
@@ -370,81 +368,6 @@ class _HomeScreenState extends State<HomeScreen>
         _scrollController.position.maxScrollExtent - 300) {
       if (!isLoadingMore && hasMore && !isLoading && isConnected) {
         loadMoreWallpapers();
-      }
-    }
-  }
-
-  Future<void> fetchWallpapers(
-      {String category = "Curated", bool reset = true}) async {
-    if (reset) {
-      setState(() {
-        isLoading = true;
-        currentCategory = category;
-        currentPage = 1;
-        wallpapers = [];
-        hasMore = true;
-      });
-    }
-
-    try {
-      String url;
-      if (category == "Curated") {
-        url =
-            'https://api.pexels.com/v1/curated?per_page=15&page=$currentPage&orientation=portrait';
-      } else if (category == "4K Ultra HD") {
-        url =
-            'https://api.pexels.com/v1/search?query=4k+wallpaper&per_page=15&page=$currentPage';
-      } else if (category == "Trending") {
-        url =
-            'https://api.pexels.com/v1/curated?per_page=15&page=$currentPage&orientation=portrait';
-      } else if (category == "New") {
-        url =
-            'https://api.pexels.com/v1/curated?per_page=15&page=${currentPage + 20}&orientation=portrait';
-      } else if (category == "Random") {
-        final seed = (DateTime.now().millisecondsSinceEpoch % 15) + currentPage;
-        url =
-            'https://api.pexels.com/v1/curated?per_page=15&page=$seed&orientation=portrait';
-      } else {
-        url =
-            'https://api.pexels.com/v1/search?query=$category&per_page=15&page=$currentPage';
-      }
-
-      final response = await _dio.get(
-        url,
-        options: Options(headers: {'Authorization': apiKey}),
-      );
-
-      if (mounted) {
-        final newPhotos = response.data['photos'] as List;
-
-        // Remove duplicates based on ID
-        final existingIds = wallpapers.map((p) => p['id']).toSet();
-        final uniqueNewPhotos =
-            newPhotos.where((p) => !existingIds.contains(p['id'])).toList();
-
-        setState(() {
-          if (reset) {
-            wallpapers = uniqueNewPhotos;
-          } else {
-            wallpapers.addAll(uniqueNewPhotos);
-          }
-          isLoading = false;
-          isLoadingMore = false;
-          hasMore = newPhotos.isNotEmpty;
-          errorMessage = null;
-          isConnected = true;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error: $e');
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-          isLoadingMore = false;
-          errorMessage =
-              'Failed to load wallpapers.\nCheck your internet connection.';
-          isConnected = false;
-        });
       }
     }
   }
@@ -1242,6 +1165,9 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
+
 
 
 
