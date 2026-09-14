@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
+import '../models/wallpaper.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'detail_screen.dart';
@@ -52,8 +54,8 @@ class FavoritesScreen extends StatelessWidget {
             ),
             itemCount: favorites.length,
             itemBuilder: (context, index) {
-              final photo = favorites[index];
-              final String imageUrl = photo['src']['medium'];
+              final wallpaper = favorites[index] as Wallpaper;
+              final String imageUrl = wallpaper.mediumUrl;
 
               return GestureDetector(
                 onTap: () {
@@ -61,7 +63,7 @@ class FavoritesScreen extends StatelessWidget {
                     context,
                     PageRouteBuilder(
                       pageBuilder: (context, animation, secondaryAnimation) =>
-                          DetailScreen(photo: photo),
+                          DetailScreen(photo: wallpaper),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
                         const begin = Offset(0.0, 1.0);
@@ -98,3 +100,5 @@ class FavoritesScreen extends StatelessWidget {
     );
   }
 }
+
+
