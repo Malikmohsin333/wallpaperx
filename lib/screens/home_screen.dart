@@ -450,13 +450,38 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<void> loadMoreWallpapers() async {
+    if (wallpaperProvider.isLoading || !wallpaperProvider.hasMore) return;
+
     setState(() {
       isLoadingMore = true;
     });
-    currentPage++;
-    await fetchWallpapers(category: currentCategory, reset: false);
-  }
 
+    await wallpaperProvider.loadMoreWallpapers(
+      category: currentCategory,
+    );
+
+    if (mounted) {
+      setState(() {
+        wallpapers = wallpaperProvider.wallpapers
+            .map(
+              (wallpaper) => {
+                'id': wallpaper.id,
+                'photographer': wallpaper.photographer,
+                'src': {
+                  'original': wallpaper.originalUrl,
+                  'large': wallpaper.largeUrl,
+                  'medium': wallpaper.mediumUrl,
+                  'portrait': wallpaper.portraitUrl,
+                },
+              },
+            )
+            .toList();
+        isLoadingMore = wallpaperProvider.isLoading;
+        hasMore = wallpaperProvider.hasMore;
+        errorMessage = wallpaperProvider.error;
+      });
+    }
+  }
   void _onSearch(String query) {
     if (query.trim().isNotEmpty && isConnected) {
       Navigator.push(
@@ -1157,5 +1182,6 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
