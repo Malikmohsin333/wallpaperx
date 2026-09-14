@@ -208,14 +208,27 @@ class _HomeScreenState extends State<HomeScreen>
 
   Future<void> _loadRecentlyViewed() async {
     final recentlyViewedBox = Hive.box('recently_viewed');
+
+    final loadedWallpapers = recentlyViewedBox.values
+        .whereType<Map>()
+        .map(
+          (photo) => Wallpaper(
+            id: photo['id'] as int,
+            photographer: photo['photographer'] as String,
+            originalUrl: photo['src']['original'] as String,
+            largeUrl: photo['src']['large'] as String,
+            mediumUrl: photo['src']['medium'] as String,
+            portraitUrl: photo['src']['portrait'] as String,
+          ),
+        )
+        .toList()
+        .reversed
+        .toList();
+
     setState(() {
-      recentlyViewed = recentlyViewedBox.values.toList().reversed.toList();
-      if (recentlyViewed.length > 20) {
-        recentlyViewed = recentlyViewed.sublist(0, 20);
-      }
+      recentlyViewed = loadedWallpapers.take(20).toList();
     });
   }
-
   Future<void> _addToRecentlyViewed(Wallpaper wallpaper) async {
     final recentlyViewedBox = Hive.box('recently_viewed');
     final id = wallpaper.id.toString();
@@ -1125,6 +1138,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
