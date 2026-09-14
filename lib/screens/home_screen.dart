@@ -1145,8 +1145,39 @@ class _HomeScreenState extends State<HomeScreen>
             const SizedBox(height: 16),
             Text(errorMessage!),
             ElevatedButton(
-              onPressed: () =>
-                  fetchWallpapers(category: currentCategory, reset: true),
+              onPressed: () async {
+                setState(() {
+                  isLoading = true;
+                  errorMessage = null;
+                });
+
+                await wallpaperProvider.loadWallpapers(
+                  category: currentCategory,
+                  refresh: true,
+                );
+
+                if (mounted) {
+                  setState(() {
+                    wallpapers = wallpaperProvider.wallpapers
+                        .map(
+                          (wallpaper) => {
+                            'id': wallpaper.id,
+                            'photographer': wallpaper.photographer,
+                            'src': {
+                              'original': wallpaper.originalUrl,
+                              'large': wallpaper.largeUrl,
+                              'medium': wallpaper.mediumUrl,
+                              'portrait': wallpaper.portraitUrl,
+                            },
+                          },
+                        )
+                        .toList();
+                    isLoading = wallpaperProvider.isLoading;
+                    hasMore = wallpaperProvider.hasMore;
+                    errorMessage = wallpaperProvider.error;
+                  });
+                }
+              },
               child: const Text('Retry'),
             ),
           ],
@@ -1211,6 +1242,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
