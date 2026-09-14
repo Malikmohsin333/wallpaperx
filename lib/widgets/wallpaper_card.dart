@@ -4,23 +4,20 @@ import 'package:flutter/material.dart';
 import '../models/wallpaper.dart';
 
 class WallpaperCard extends StatelessWidget {
-  final Wallpaper? wallpaper;
-  final Map<String, dynamic>? photo;
+  final Wallpaper wallpaper;
   final bool isDarkMode;
   final VoidCallback onTap;
 
   const WallpaperCard({
     super.key,
-    this.wallpaper,
-    this.photo,
+    required this.wallpaper,
     required this.isDarkMode,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String imageUrl =
-        wallpaper?.mediumUrl ?? photo!['src']['medium'] as String;
+    final String imageUrl = wallpaper.mediumUrl;
 
     return GestureDetector(
       onTap: onTap,
@@ -56,3 +53,4 @@ class WallpaperCard extends StatelessWidget {
     );
   }
 }
+
