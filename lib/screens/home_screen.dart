@@ -10,11 +10,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../widgets/shimmer_loading_grid.dart';
 import '../widgets/no_internet_message.dart';
 import '../widgets/loading_dots.dart';
 import '../widgets/animated_message.dart';
-import '../widgets/wallpaper_card.dart';
+import '../widgets/wallpaper_grid.dart';
 import '../state/theme_provider.dart';
 import '../state/wallpaper_provider.dart';
 import 'detail_screen.dart';
@@ -931,104 +930,38 @@ class _HomeScreenState extends State<HomeScreen>
   // FIX: pass isDarkMode from build context using Theme
 
   Widget _buildWallpapersGrid(bool isDarkMode) {
-    if (isLoading && wallpapers.isEmpty) {
-      return ShimmerLoadingGrid(
-        isDarkMode: isDarkMode,
-      );
-    }
+    return WallpaperGrid(
+      wallpapers: wallpapers,
+      isDarkMode: isDarkMode,
+      isLoading: isLoading,
+      errorMessage: errorMessage,
+      onRetry: () async {
+        setState(() {
+          isLoading = true;
+          errorMessage = null;
+        });
 
-    if (errorMessage != null && wallpapers.isEmpty) {
-      return Center(
-        child: Column(
-          children: [
-            const Icon(Icons.error, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            Text(errorMessage!),
-            ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  isLoading = true;
-                  errorMessage = null;
-                });
-
-                await wallpaperProvider.loadWallpapers(
-                  category: currentCategory,
-                  refresh: true,
-                );
-
-                if (mounted) {
-                  setState(() {
-                    wallpapers = wallpaperProvider.wallpapers;
-                    isLoading = wallpaperProvider.isLoading;
-                    hasMore = wallpaperProvider.hasMore;
-                    errorMessage = wallpaperProvider.error;
-                  });
-                }
-              },
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (wallpapers.isEmpty) {
-      return const Center(child: Text('No wallpapers found'));
-    }
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.75,
-      ),
-      itemCount: wallpapers.length,
-      itemBuilder: (context, index) {
-        final wallpaper = wallpapers[index];
-
-        return WallpaperCard(
-          wallpaper: wallpaper,
-          isDarkMode: isDarkMode,
-          onTap: () async {
-            await _addToRecentlyViewed(wallpaper);
-
-            if (!context.mounted) return;
-
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    DetailScreen(photo: wallpaper),
-                transitionsBuilder:
-                    (context, animation, secondaryAnimation, child) {
-                  const begin = Offset(0.0, 1.0);
-                  const end = Offset.zero;
-                  const curve = Curves.easeInOut;
-
-                  final tween = Tween(
-                    begin: begin,
-                    end: end,
-                  ).chain(
-                    CurveTween(curve: curve),
-                  );
-
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                },
-              ),
-            );
-          },
+        await wallpaperProvider.loadWallpapers(
+          category: currentCategory,
+          refresh: true,
         );
+
+        if (mounted) {
+          setState(() {
+            wallpapers = wallpaperProvider.wallpapers;
+            isLoading = wallpaperProvider.isLoading;
+            hasMore = wallpaperProvider.hasMore;
+            errorMessage = wallpaperProvider.error;
+          });
+        }
       },
+      onWallpaperTap: _addToRecentlyViewed,
     );
   }
 }
+
+
+
 
 
 
