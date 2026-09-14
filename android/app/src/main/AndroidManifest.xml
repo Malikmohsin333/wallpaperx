@@ -30,7 +30,7 @@
         </provider>
 
      <activity
-    android:name=".MainActivity"
+         android:name="com.mohsin.wallpaperx.MainActivity"
     android:exported="true"
     android:theme="@style/LaunchTheme"
     android:launchMode="singleTop"

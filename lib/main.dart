@@ -382,6 +382,18 @@ class _HomeScreenState extends State<HomeScreen>
     return 'Welcome Back';
   }
 
+  String _getCategoryCount() {
+    final mainCategoryNames = mainCategories.map((c) => c['name']).toSet();
+    if (mainCategoryNames.contains(currentCategory)) {
+      return '${wallpapers.length}+';
+    }
+    final match = categories.firstWhere(
+      (c) => c['name'] == currentCategory,
+      orElse: () => {'count': '${wallpapers.length}+'},
+    );
+    return match['count'];
+  }
+
   Future<void> _checkInternetAndLoad() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult.contains(ConnectivityResult.none)) {
@@ -422,29 +434,24 @@ class _HomeScreenState extends State<HomeScreen>
     try {
       String url;
       if (category == "Curated") {
-        final randomPage = DateTime.now().millisecondsSinceEpoch % 10 + 1;
         url =
-            'https://api.pexels.com/v1/curated?per_page=8&page=$randomPage&orientation=portrait';
+            'https://api.pexels.com/v1/curated?per_page=15&page=$currentPage&orientation=portrait';
       } else if (category == "4K Ultra HD") {
-        final randomPage = DateTime.now().millisecondsSinceEpoch % 10 + 1;
         url =
-            'https://api.pexels.com/v1/search?query=4k&per_page=8&page=$randomPage';
+            'https://api.pexels.com/v1/search?query=4k+wallpaper&per_page=15&page=$currentPage';
       } else if (category == "Trending") {
-        final randomPage = DateTime.now().millisecondsSinceEpoch % 10 + 1;
         url =
-            'https://api.pexels.com/v1/curated?per_page=8&page=$randomPage&orientation=portrait';
+            'https://api.pexels.com/v1/curated?per_page=15&page=$currentPage&orientation=portrait';
       } else if (category == "New") {
-        final randomPage = DateTime.now().millisecondsSinceEpoch % 10 + 1;
         url =
-            'https://api.pexels.com/v1/curated?per_page=8&page=$randomPage&orientation=portrait';
+            'https://api.pexels.com/v1/curated?per_page=15&page=${currentPage + 20}&orientation=portrait';
       } else if (category == "Random") {
-        final randomPage = DateTime.now().millisecondsSinceEpoch % 20 + 1;
+        final seed = (DateTime.now().millisecondsSinceEpoch % 15) + currentPage;
         url =
-            'https://api.pexels.com/v1/curated?per_page=8&page=$randomPage&orientation=portrait';
+            'https://api.pexels.com/v1/curated?per_page=15&page=$seed&orientation=portrait';
       } else {
-        final randomPage = DateTime.now().millisecondsSinceEpoch % 10 + 1;
         url =
-            'https://api.pexels.com/v1/search?query=$category&per_page=8&page=$randomPage';
+            'https://api.pexels.com/v1/search?query=$category&per_page=15&page=$currentPage';
       }
 
       final response = await _dio.get(
@@ -704,58 +711,75 @@ class _HomeScreenState extends State<HomeScreen>
                 // Main Categories Row
                 if (isConnected)
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 0, 0),
                     child: SizedBox(
                       height: 70,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: mainCategories.length,
-                        itemBuilder: (context, index) {
-                          final category = mainCategories[index];
-                          final isSelected =
-                              currentCategory == category['name'];
-                          return GestureDetector(
-                            onTap: () => _onCategoryTap(category['name']),
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 6),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? const Color(0xFF6366F1)
-                                    : (isDarkMode
-                                        ? Colors.grey[800]
-                                        : Colors.grey[100]),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    category['icon'],
-                                    size: 18,
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Color(category['color']),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    category['name'],
-                                    style: TextStyle(
+                      child: ShaderMask(
+                        shaderCallback: (Rect bounds) {
+                          return const LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Colors.white,
+                              Colors.white,
+                              Colors.transparent
+                            ],
+                            stops: [0.0, 0.88, 1.0],
+                          ).createShader(bounds);
+                        },
+                        blendMode: BlendMode.dstIn,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.only(right: 32),
+                          itemCount: mainCategories.length,
+                          itemBuilder: (context, index) {
+                            final category = mainCategories[index];
+                            final isSelected =
+                                currentCategory == category['name'];
+                            return GestureDetector(
+                              onTap: () => _onCategoryTap(category['name']),
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? const Color(0xFF6366F1)
+                                      : (isDarkMode
+                                          ? Colors.grey[800]
+                                          : Colors.grey[100]),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      category['icon'],
+                                      size: 18,
                                       color: isSelected
                                           ? Colors.white
-                                          : (isDarkMode
-                                              ? Colors.white
-                                              : Colors.black),
-                                      fontWeight: isSelected
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
+                                          : Color(category['color']),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      category['name'],
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : (isDarkMode
+                                                ? Colors.white
+                                                : Colors.black),
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -815,64 +839,80 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       SizedBox(
                         height: 120,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: recentlyViewed.length > 10
-                              ? 10
-                              : recentlyViewed.length,
-                          itemBuilder: (context, index) {
-                            final photo = recentlyViewed[index];
-                            final String imageUrl = photo['src']['small'];
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        DetailScreen(photo: photo),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      const begin = Offset(0.0, 1.0);
-                                      const end = Offset.zero;
-                                      const curve = Curves.easeInOut;
-                                      var tween = Tween(begin: begin, end: end)
-                                          .chain(CurveTween(curve: curve));
-                                      return SlideTransition(
-                                          position: animation.drive(tween),
-                                          child: child);
-                                    },
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: 80,
-                                height: 120,
-                                margin: const EdgeInsets.only(right: 12),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          Colors.black.withValues(alpha: 0.1),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: CachedNetworkImage(
-                                    imageUrl: imageUrl,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        Container(color: Colors.grey[300]),
-                                  ),
-                                ),
-                              ),
-                            );
+                        child: ShaderMask(
+                          shaderCallback: (Rect bounds) {
+                            return const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Colors.white,
+                                Colors.white,
+                                Colors.transparent
+                              ],
+                              stops: [0.0, 0.88, 1.0],
+                            ).createShader(bounds);
                           },
+                          blendMode: BlendMode.dstIn,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.fromLTRB(16, 0, 32, 0),
+                            itemCount: recentlyViewed.length > 10
+                                ? 10
+                                : recentlyViewed.length,
+                            itemBuilder: (context, index) {
+                              final photo = recentlyViewed[index];
+                              final String imageUrl = photo['src']['small'];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          DetailScreen(photo: photo),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        const begin = Offset(0.0, 1.0);
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeInOut;
+                                        var tween = Tween(
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
+                                        return SlideTransition(
+                                            position: animation.drive(tween),
+                                            child: child);
+                                      },
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  width: 80,
+                                  height: 120,
+                                  margin: const EdgeInsets.only(right: 12),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color:
+                                            Colors.black.withValues(alpha: 0.1),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: CachedNetworkImage(
+                                      imageUrl: imageUrl,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          Container(color: Colors.grey[300]),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -902,57 +942,73 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
                 SizedBox(
                   height: 110,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      final category = categories[index];
-                      final isSelected = currentCategory == category['name'];
-                      return GestureDetector(
-                        onTap: () => _onCategoryTap(category['name']),
-                        child: Container(
-                          width: 90,
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            color:
-                                Color(category['color']).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                            border: isSelected
-                                ? Border.all(
-                                    color: Color(category['color']), width: 2)
-                                : null,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                category['icon'],
-                                size: 32,
-                                color: Color(category['color']),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                category['name'],
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                  color:
-                                      isDarkMode ? Colors.white : Colors.black,
-                                ),
-                              ),
-                              Text(
-                                '${category['count']}',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.white,
+                          Colors.white,
+                          Colors.transparent
+                        ],
+                        stops: [0.0, 0.88, 1.0],
+                      ).createShader(bounds);
                     },
+                    blendMode: BlendMode.dstIn,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.fromLTRB(16, 0, 32, 0),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) {
+                        final category = categories[index];
+                        final isSelected = currentCategory == category['name'];
+                        return GestureDetector(
+                          onTap: () => _onCategoryTap(category['name']),
+                          child: Container(
+                            width: 90,
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            decoration: BoxDecoration(
+                              color: Color(category['color'])
+                                  .withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: isSelected
+                                  ? Border.all(
+                                      color: Color(category['color']), width: 2)
+                                  : null,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  category['icon'],
+                                  size: 32,
+                                  color: Color(category['color']),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  category['name'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                                Text(
+                                  '${category['count']}',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
 
@@ -972,7 +1028,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       if (isConnected)
                         Text(
-                          '${wallpapers.length}+ Wallpapers',
+                          '${_getCategoryCount()} Wallpapers',
                           style:
                               TextStyle(fontSize: 12, color: Colors.grey[500]),
                         ),
@@ -1904,9 +1960,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
-      extendBodyBehindAppBar: true, // ← ADD THIS LINE
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: isDarkMode ? Colors.black : Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back,
@@ -1925,52 +1981,52 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
         ],
       ),
-      body: SafeArea(
-        // ← ADD THIS (wrap Column with SafeArea)
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.contain,
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.contain,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
+            ),
+          ),
+          Container(
+            color: isDarkMode ? Colors.black : Colors.white,
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom + 16,
+              top: 16,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildActionButton(
+                  icon: Icons.download,
+                  label: 'Download',
+                  onTap: () => _saveImage(context, imageUrl),
+                  isDarkMode: isDarkMode,
                 ),
-              ),
+                _buildActionButton(
+                  icon: Icons.share,
+                  label: 'Share',
+                  onTap: () => _shareWallpaper(imageUrl),
+                  isDarkMode: isDarkMode,
+                ),
+                _buildActionButton(
+                  icon: Icons.wallpaper,
+                  label: isSettingWallpaper ? 'Setting...' : 'Set as',
+                  onTap: isSettingWallpaper
+                      ? null
+                      : () => _showSetWallpaperOptions(context, imageUrl),
+                  isDarkMode: isDarkMode,
+                ),
+              ],
             ),
-            Container(
-              // ← ADD THIS Container (replace Padding)
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildActionButton(
-                    icon: Icons.download,
-                    label: 'Download',
-                    onTap: () => _saveImage(context, imageUrl),
-                    isDarkMode: isDarkMode,
-                  ),
-                  _buildActionButton(
-                    icon: Icons.share,
-                    label: 'Share',
-                    onTap: () => _shareWallpaper(imageUrl),
-                    isDarkMode: isDarkMode,
-                  ),
-                  _buildActionButton(
-                    icon: Icons.wallpaper,
-                    label: isSettingWallpaper ? 'Setting...' : 'Set as',
-                    onTap: isSettingWallpaper
-                        ? null
-                        : () => _showSetWallpaperOptions(context, imageUrl),
-                    isDarkMode: isDarkMode,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
