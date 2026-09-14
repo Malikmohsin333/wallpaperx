@@ -14,6 +14,7 @@ import '../widgets/no_internet_message.dart';
 import '../widgets/loading_dots.dart';
 import '../widgets/animated_message.dart';
 import '../widgets/wallpaper_grid.dart';
+import '../widgets/settings_bottom_sheet.dart';
 import '../state/theme_provider.dart';
 import '../state/wallpaper_provider.dart';
 import 'detail_screen.dart';
@@ -433,43 +434,17 @@ class _HomeScreenState extends State<HomeScreen>
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.clear_all, color: Color(0xFF6366F1)),
-              title: const Text('Clear Cache'),
-              onTap: () {
-                Navigator.pop(context);
-                _clearCache();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.share, color: Color(0xFF6366F1)),
-              title: const Text('Share App'),
-              onTap: () {
-                Navigator.pop(context);
-                _shareApp();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.star, color: Color(0xFF6366F1)),
-              title: const Text('Rate Us'),
-              onTap: () {
-                Navigator.pop(context);
-                _showRateDialog();
-              },
-            ),
-          ],
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
         ),
+      ),
+      builder: (context) => SettingsBottomSheet(
+        onClearCache: _clearCache,
+        onShareApp: _shareApp,
+        onRateUs: _showRateDialog,
       ),
     );
   }
-
   void _showAnimatedMessage(String message, {bool isSuccess = true}) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
@@ -959,6 +934,8 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
 
 
 
