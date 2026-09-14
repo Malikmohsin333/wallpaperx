@@ -1,10 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'detail_screen.dart';
 import '../models/wallpaper.dart';
+import '../services/api_service.dart';
 
 class SearchResultsScreen extends StatefulWidget {
   final String searchQuery;
@@ -26,9 +25,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   int currentPage = 1;
   bool hasMore = true;
 
-  final Dio _dio = Dio();
-  final String apiKey = dotenv.env['PEXELS_API_KEY'] ?? '';
-  final ScrollController _scrollController = ScrollController();
+  final ApiService _apiService = ApiService();
+    final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -67,28 +65,13 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       final randomPage =
           DateTime.now().millisecondsSinceEpoch % 10 + currentPage;
 
-      final response = await _dio.get(
-        'https://api.pexels.com/v1/search',
-        queryParameters: {
-          'query': widget.searchQuery,
-          'per_page': 8,
-          'page': randomPage,
-        },
-        options: Options(
-          headers: {
-            'Authorization': apiKey,
-          },
-        ),
+      final newResults = await _apiService.searchWallpapers(
+        query: widget.searchQuery,
+        page: randomPage,
+        perPage: 8,
       );
 
       if (mounted) {
-        final newResults = (response.data['photos'] as List)
-            .map(
-              (photo) => Wallpaper.fromJson(
-                photo as Map<String, dynamic>,
-              ),
-            )
-            .toList();
         setState(() {
           if (reset) {
             results = newResults;
@@ -113,7 +96,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       }
     }
   }
-
   Future<void> loadMoreResults() async {
     setState(() {
       isLoadingMore = true;
@@ -357,6 +339,10 @@ class CustomSearchDelegate extends SearchDelegate<String> {
     );
   }
 }
+
+
+
+
 
 
 
