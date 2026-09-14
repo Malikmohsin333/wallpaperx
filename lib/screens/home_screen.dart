@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../widgets/shimmer_loading_grid.dart';
 import '../widgets/no_internet_message.dart';
 import '../widgets/loading_dots.dart';
+import '../widgets/animated_message.dart';
 import '../widgets/wallpaper_card.dart';
 import '../state/theme_provider.dart';
 import '../state/wallpaper_provider.dart';
@@ -473,42 +474,18 @@ class _HomeScreenState extends State<HomeScreen>
   void _showAnimatedMessage(String message, {bool isSuccess = true}) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        bottom: 80,
-        left: 20,
-        right: 20,
-        child: TweenAnimationBuilder(
-          tween: Tween<double>(begin: 0, end: 1),
-          duration: const Duration(milliseconds: 300),
-          builder: (context, value, child) {
-            return Transform.scale(
-              scale: value,
-              child: Material(
-                elevation: 6,
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: isSuccess ? Colors.green : Colors.red,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    message,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
+      builder: (context) => AnimatedMessage(
+        message: message,
+        isSuccess: isSuccess,
       ),
     );
 
     overlay.insert(overlayEntry);
-    Future.delayed(const Duration(seconds: 2), () => overlayEntry.remove());
+    Future.delayed(
+      const Duration(seconds: 2),
+      () => overlayEntry.remove(),
+    );
   }
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -1052,6 +1029,8 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
 
 
 
