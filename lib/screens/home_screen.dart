@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/shimmer_loading_grid.dart';
+import '../widgets/no_internet_message.dart';
 import '../widgets/wallpaper_card.dart';
 import '../state/theme_provider.dart';
 import '../state/wallpaper_provider.dart';
@@ -954,7 +955,18 @@ class _HomeScreenState extends State<HomeScreen>
                 // Wallpapers Grid or No Internet Message
                 isConnected
                     ? _buildWallpapersGrid(isDarkMode)
-                    : _buildNoInternetMessage(isDarkMode),
+                    : NoInternetMessage(
+    isDarkMode: isDarkMode,
+    onRetry: _checkInternetAndLoad,
+    onViewFavorites: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const FavoritesScreen(),
+        ),
+      );
+    },
+  ),
 
                 if (isLoadingMore && isConnected) _buildAnimatedLoadingDots(),
                 const SizedBox(height: 80),
@@ -962,72 +974,6 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildNoInternetMessage(bool isDarkMode) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 60),
-          Icon(
-            Icons.wifi_off,
-            size: 80,
-            color: isDarkMode ? Colors.grey[600] : Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No Internet Connection',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Please check your connection\nand try again.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: _checkInternetAndLoad,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6366F1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-            child: const Text('Retry'),
-          ),
-          const SizedBox(height: 40),
-          Text(
-            'Your favorites are still available!',
-            style: TextStyle(
-              color: isDarkMode ? Colors.grey[500] : Colors.grey[500],
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const FavoritesScreen()),
-              );
-            },
-            icon: const Icon(Icons.favorite_border, color: Color(0xFF6366F1)),
-            label: const Text(
-              'View Favorites',
-              style: TextStyle(color: Color(0xFF6366F1)),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -1133,6 +1079,9 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
+
 
 
 
