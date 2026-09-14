@@ -21,7 +21,7 @@ class WallpaperProvider extends ChangeNotifier {
 
   String? get error => _error;
 
-    Future<void> loadWallpapers({
+  Future<void> loadWallpapers({
     String category = 'Curated',
     bool refresh = false,
   }) async {
@@ -49,7 +49,8 @@ class WallpaperProvider extends ChangeNotifier {
       if (newWallpapers.isEmpty) {
         _hasMore = false;
       } else {
-        final existingIds = _wallpapers.map((wallpaper) => wallpaper.id).toSet();
+        final existingIds =
+            _wallpapers.map((wallpaper) => wallpaper.id).toSet();
 
         final uniqueWallpapers = newWallpapers
             .where((wallpaper) => !existingIds.contains(wallpaper.id))
