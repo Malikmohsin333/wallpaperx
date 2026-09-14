@@ -216,9 +216,20 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  Future<void> _addToRecentlyViewed(dynamic photo) async {
+  Future<void> _addToRecentlyViewed(Wallpaper wallpaper) async {
     final recentlyViewedBox = Hive.box('recently_viewed');
-    final id = photo['id'].toString();
+    final id = wallpaper.id.toString();
+
+    final photo = {
+      'id': wallpaper.id,
+      'photographer': wallpaper.photographer,
+      'src': {
+        'original': wallpaper.originalUrl,
+        'large': wallpaper.largeUrl,
+        'medium': wallpaper.mediumUrl,
+        'portrait': wallpaper.portraitUrl,
+      },
+    };
 
     if (recentlyViewedBox.containsKey(id)) {
       recentlyViewedBox.delete(id);
@@ -233,7 +244,6 @@ class _HomeScreenState extends State<HomeScreen>
 
     await _loadRecentlyViewed();
   }
-
   Future<void> _checkAndShowRateDialog() async {
     final prefs = await SharedPreferences.getInstance();
     final downloadCount = prefs.getInt('download_count') ?? 0;
@@ -1115,6 +1125,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
