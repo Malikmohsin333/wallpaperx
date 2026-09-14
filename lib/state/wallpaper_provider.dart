@@ -68,6 +68,17 @@ class WallpaperProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> loadMoreWallpapers({
+    required String category,
+  }) async {
+    if (_isLoading || !_hasMore) return;
+
+    await loadWallpapers(
+      category: category,
+      refresh: false,
+    );
+  }
+
   void clearWallpapers() {
     _wallpapers.clear();
     _currentPage = 1;
