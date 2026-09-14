@@ -778,8 +778,8 @@ class _HomeScreenState extends State<HomeScreen>
                                 ? 10
                                 : recentlyViewed.length,
                             itemBuilder: (context, index) {
-                              final photo = recentlyViewed[index];
-                              final String imageUrl = photo['src']['small'];
+                              final wallpaper = recentlyViewed[index];
+                              final String imageUrl = wallpaper.mediumUrl;
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -787,7 +787,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     PageRouteBuilder(
                                       pageBuilder: (context, animation,
                                               secondaryAnimation) =>
-                                          DetailScreen(photo: photo),
+                                          DetailScreen(photo: wallpaper),
                                       transitionsBuilder: (context, animation,
                                           secondaryAnimation, child) {
                                         const begin = Offset(0.0, 1.0);
@@ -1138,6 +1138,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
