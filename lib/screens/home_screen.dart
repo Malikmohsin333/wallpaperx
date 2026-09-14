@@ -12,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/shimmer_loading_grid.dart';
 import '../widgets/no_internet_message.dart';
+import '../widgets/loading_dots.dart';
 import '../widgets/wallpaper_card.dart';
 import '../state/theme_provider.dart';
 import '../state/wallpaper_provider.dart';
@@ -167,34 +168,6 @@ class _HomeScreenState extends State<HomeScreen>
     _loadRecentlyViewed();
     _scrollController.addListener(_onScroll);
     _checkAndShowRateDialog();
-  }
-
-  Widget _buildAnimatedLoadingDots() {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) {
-            return TweenAnimationBuilder(
-              tween: Tween<double>(begin: 0.3, end: 1.0),
-              duration: Duration(milliseconds: 500 + (index * 150)),
-              builder: (context, double value, child) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 6),
-                  width: 12 * value,
-                  height: 12 * value,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF6366F1).withValues(alpha: value),
-                  ),
-                );
-              },
-            );
-          }),
-        ),
-      ),
-    );
   }
 
   @override
@@ -968,7 +941,7 @@ class _HomeScreenState extends State<HomeScreen>
     },
   ),
 
-                if (isLoadingMore && isConnected) _buildAnimatedLoadingDots(),
+                if (isLoadingMore && isConnected) const LoadingDots(),
                 const SizedBox(height: 80),
               ],
             ),
@@ -1079,6 +1052,9 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
+
 
 
 
