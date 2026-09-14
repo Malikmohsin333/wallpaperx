@@ -11,6 +11,7 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
+    - lib/screens/detail_screen_before_image_service.dart
     - lib/main_before_app_cleanup.dart
     - lib/main_before_home_cleanup.dart
     - lib/main_working_backup.dart
@@ -31,4 +32,6 @@ linter:
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+
+
 

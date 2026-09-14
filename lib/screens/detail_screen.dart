@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -11,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/wallpaper.dart';
+import '../services/image_download_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final Wallpaper photo;
@@ -30,6 +30,7 @@ class WallpaperManager {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  final ImageDownloadService _imageDownloadService = ImageDownloadService();
   late Box favoritesBox;
   bool isFavorite = false;
   bool isSettingWallpaper = false;
@@ -216,14 +217,7 @@ class _DetailScreenState extends State<DetailScreen> {
     }
 
     try {
-      final response = await Dio().get(
-        imageUrl,
-        options: Options(
-          responseType: ResponseType.bytes,
-        ),
-      );
-
-      final bytes = response.data as Uint8List;
+      final bytes = await _imageDownloadService.downloadImage(imageUrl);
 
       const platform = MethodChannel('download_channel');
 
@@ -260,14 +254,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Future<void> _shareWallpaper(String imageUrl) async {
     try {
-      final response = await Dio().get(
-        imageUrl,
-        options: Options(
-          responseType: ResponseType.bytes,
-        ),
-      );
-
-      final bytes = response.data as Uint8List;
+      final bytes = await _imageDownloadService.downloadImage(imageUrl);
 
       final tempDir = await getTemporaryDirectory();
 
@@ -318,14 +305,7 @@ class _DetailScreenState extends State<DetailScreen> {
     });
 
     try {
-      final response = await Dio().get(
-        imageUrl,
-        options: Options(
-          responseType: ResponseType.bytes,
-        ),
-      );
-
-      final bytes = response.data as Uint8List;
+      final bytes = await _imageDownloadService.downloadImage(imageUrl);
 
       final tempDir = await getTemporaryDirectory();
 
@@ -600,6 +580,10 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
+
+
+
+
 
 
 
