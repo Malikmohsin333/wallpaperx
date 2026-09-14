@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../models/wallpaper.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +28,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  List<dynamic> wallpapers = [];
+  List<Wallpaper> wallpapers = [];
   List<dynamic> recentlyViewed = [];
   bool isLoading = true;
   bool isLoadingMore = false;
@@ -342,20 +344,7 @@ class _HomeScreenState extends State<HomeScreen>
 
       if (mounted) {
         setState(() {
-          wallpapers = wallpaperProvider.wallpapers
-              .map(
-                (wallpaper) => {
-                  'id': wallpaper.id,
-                  'photographer': wallpaper.photographer,
-                  'src': {
-                    'original': wallpaper.originalUrl,
-                    'large': wallpaper.largeUrl,
-                    'medium': wallpaper.mediumUrl,
-                    'portrait': wallpaper.portraitUrl,
-                  },
-                },
-              )
-              .toList();
+          wallpapers = wallpaperProvider.wallpapers;
           isLoading = wallpaperProvider.isLoading;
           hasMore = wallpaperProvider.hasMore;
           errorMessage = wallpaperProvider.error;
@@ -385,20 +374,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     if (mounted) {
       setState(() {
-        wallpapers = wallpaperProvider.wallpapers
-            .map(
-              (wallpaper) => {
-                'id': wallpaper.id,
-                'photographer': wallpaper.photographer,
-                'src': {
-                  'original': wallpaper.originalUrl,
-                  'large': wallpaper.largeUrl,
-                  'medium': wallpaper.mediumUrl,
-                  'portrait': wallpaper.portraitUrl,
-                },
-              },
-            )
-            .toList();
+        wallpapers = wallpaperProvider.wallpapers;
         isLoadingMore = wallpaperProvider.isLoading;
         hasMore = wallpaperProvider.hasMore;
         errorMessage = wallpaperProvider.error;
@@ -446,20 +422,7 @@ class _HomeScreenState extends State<HomeScreen>
 
       if (mounted) {
         setState(() {
-          wallpapers = wallpaperProvider.wallpapers
-              .map(
-                (wallpaper) => {
-                  'id': wallpaper.id,
-                  'photographer': wallpaper.photographer,
-                  'src': {
-                    'original': wallpaper.originalUrl,
-                    'large': wallpaper.largeUrl,
-                    'medium': wallpaper.mediumUrl,
-                    'portrait': wallpaper.portraitUrl,
-                  },
-                },
-              )
-              .toList();
+          wallpapers = wallpaperProvider.wallpapers;
           isLoading = wallpaperProvider.isLoading;
           hasMore = wallpaperProvider.hasMore;
           errorMessage = wallpaperProvider.error;
@@ -1081,20 +1044,7 @@ class _HomeScreenState extends State<HomeScreen>
 
                 if (mounted) {
                   setState(() {
-                    wallpapers = wallpaperProvider.wallpapers
-                        .map(
-                          (wallpaper) => {
-                            'id': wallpaper.id,
-                            'photographer': wallpaper.photographer,
-                            'src': {
-                              'original': wallpaper.originalUrl,
-                              'large': wallpaper.largeUrl,
-                              'medium': wallpaper.mediumUrl,
-                              'portrait': wallpaper.portraitUrl,
-                            },
-                          },
-                        )
-                        .toList();
+                    wallpapers = wallpaperProvider.wallpapers;
                     isLoading = wallpaperProvider.isLoading;
                     hasMore = wallpaperProvider.hasMore;
                     errorMessage = wallpaperProvider.error;
@@ -1127,7 +1077,7 @@ class _HomeScreenState extends State<HomeScreen>
         final photo = wallpapers[index];
 
         return WallpaperCard(
-          photo: photo,
+          wallpaper: photo,
           isDarkMode: isDarkMode,
           onTap: () async {
             await _addToRecentlyViewed(photo);
@@ -1165,6 +1115,12 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
+
+
+
+
 
 
 
