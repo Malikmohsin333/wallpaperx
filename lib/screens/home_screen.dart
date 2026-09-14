@@ -8,13 +8,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../widgets/no_internet_message.dart';
 import '../widgets/loading_dots.dart';
 import '../widgets/animated_message.dart';
 import '../widgets/wallpaper_grid.dart';
 import '../widgets/settings_bottom_sheet.dart';
+import '../widgets/rate_dialog.dart';
 import '../state/theme_provider.dart';
 import '../state/wallpaper_provider.dart';
 import 'detail_screen.dart';
@@ -243,42 +243,9 @@ class _HomeScreenState extends State<HomeScreen>
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Enjoying WallpaperX?'),
-        content:
-            const Text('Please rate us on the Play Store and help us improve!'),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('has_rated', true);
-              if (dialogContext.mounted) {
-                Navigator.pop(dialogContext);
-              }
-            },
-            child: const Text('No, Thanks'),
-          ),
-          TextButton(
-            onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('has_rated', true);
-              const url =
-                  'https://play.google.com/store/apps/details?id=com.example.wallpaperx';
-              if (await canLaunchUrl(Uri.parse(url))) {
-                await launchUrl(Uri.parse(url));
-              }
-              if (dialogContext.mounted) {
-                Navigator.pop(dialogContext);
-              }
-            },
-            child: const Text('Rate Now',
-                style: TextStyle(color: Color(0xFF6366F1))),
-          ),
-        ],
-      ),
+      builder: (_) => const RateDialog(),
     );
   }
-
   Future<void> _clearCache() async {
     try {
       final tempDir = await getTemporaryDirectory();
@@ -934,6 +901,9 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
+
 
 
 
