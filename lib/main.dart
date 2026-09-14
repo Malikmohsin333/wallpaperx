@@ -36,18 +36,6 @@ void main() async {
   );
 }
 
-class LegacyThemeProvider extends ChangeNotifier {
-  bool _isDarkMode;
-  LegacyThemeProvider({required bool isDarkMode}) : _isDarkMode = isDarkMode;
-  bool get isDarkMode => _isDarkMode;
-  void toggleTheme() {
-    _isDarkMode = !_isDarkMode;
-    final settingsBox = Hive.box('settings');
-    settingsBox.put('isDarkMode', _isDarkMode);
-    notifyListeners();
-  }
-}
-
 // All Categories Screen
 
 // Custom Search Delegate
