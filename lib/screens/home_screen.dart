@@ -29,7 +29,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   List<Wallpaper> wallpapers = [];
-  List<dynamic> recentlyViewed = [];
+  List<Wallpaper> recentlyViewed = [];
   bool isLoading = true;
   bool isLoadingMore = false;
   String? errorMessage;
@@ -1138,6 +1138,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
