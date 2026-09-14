@@ -1033,14 +1033,12 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   // FIX: pass isDarkMode from build context using Theme
-  Widget _buildAnimatedLoadingGrid() {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    return ShimmerLoadingGrid(isDarkMode: isDarkMode);
-  }
 
   Widget _buildWallpapersGrid(bool isDarkMode) {
     if (isLoading && wallpapers.isEmpty) {
-      return _buildAnimatedLoadingGrid();
+      return ShimmerLoadingGrid(
+        isDarkMode: isDarkMode,
+      );
     }
 
     if (errorMessage != null && wallpapers.isEmpty) {
@@ -1135,6 +1133,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
