@@ -165,7 +165,18 @@ class _DetailScreenState extends State<DetailScreen> {
         isSuccess: true,
       );
     } else {
-      favoritesBox.put(id, widget.photo);
+      final photo = {
+        'id': widget.photo.id,
+        'photographer': widget.photo.photographer,
+        'src': {
+          'original': widget.photo.originalUrl,
+          'large': widget.photo.largeUrl,
+          'medium': widget.photo.mediumUrl,
+          'portrait': widget.photo.portraitUrl,
+        },
+      };
+
+      favoritesBox.put(id, photo);
 
       setState(() {
         isFavorite = true;
@@ -589,6 +600,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
+
 
 
 

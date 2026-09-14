@@ -42,7 +42,19 @@ class FavoritesScreen extends StatelessWidget {
             );
           }
 
-          final favorites = box.values.toList();
+          final favorites = box.values
+              .whereType<Map>()
+              .map(
+                (photo) => Wallpaper(
+                  id: photo['id'] as int,
+                  photographer: photo['photographer'] as String,
+                  originalUrl: photo['src']['original'] as String,
+                  largeUrl: photo['src']['large'] as String,
+                  mediumUrl: photo['src']['medium'] as String,
+                  portraitUrl: photo['src']['portrait'] as String,
+                ),
+              )
+              .toList();
 
           return GridView.builder(
             padding: const EdgeInsets.all(12),
@@ -54,7 +66,7 @@ class FavoritesScreen extends StatelessWidget {
             ),
             itemCount: favorites.length,
             itemBuilder: (context, index) {
-              final wallpaper = favorites[index] as Wallpaper;
+              final wallpaper = favorites[index];
               final String imageUrl = wallpaper.mediumUrl;
 
               return GestureDetector(
@@ -100,5 +112,7 @@ class FavoritesScreen extends StatelessWidget {
     );
   }
 }
+
+
 
 
