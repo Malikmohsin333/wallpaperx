@@ -10,8 +10,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/wallpaper.dart';
+
 class DetailScreen extends StatefulWidget {
-  final dynamic photo;
+  final Wallpaper photo;
 
   const DetailScreen({
     super.key,
@@ -141,7 +143,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   void _checkIfFavorite() {
-    final id = widget.photo['id'].toString();
+    final id = widget.photo.id.toString();
 
     setState(() {
       isFavorite = favoritesBox.containsKey(id);
@@ -149,7 +151,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   void _toggleFavorite() {
-    final id = widget.photo['id'].toString();
+    final id = widget.photo.id.toString();
 
     if (isFavorite) {
       favoritesBox.delete(id);
@@ -471,7 +473,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String imageUrl = widget.photo['src']['original'];
+    final String imageUrl = widget.photo.originalUrl;
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
@@ -587,3 +589,6 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
+
+
+
