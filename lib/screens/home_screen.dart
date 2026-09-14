@@ -1074,13 +1074,13 @@ class _HomeScreenState extends State<HomeScreen>
       ),
       itemCount: wallpapers.length,
       itemBuilder: (context, index) {
-        final photo = wallpapers[index];
+        final wallpaper = wallpapers[index];
 
         return WallpaperCard(
-          wallpaper: photo,
+          wallpaper: wallpaper,
           isDarkMode: isDarkMode,
           onTap: () async {
-            await _addToRecentlyViewed(photo);
+            await _addToRecentlyViewed(wallpaper);
 
             if (!context.mounted) return;
 
@@ -1088,7 +1088,7 @@ class _HomeScreenState extends State<HomeScreen>
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation, secondaryAnimation) =>
-                    DetailScreen(photo: photo),
+                    DetailScreen(photo: wallpaper),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) {
                   const begin = Offset(0.0, 1.0);
@@ -1115,6 +1115,9 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
+
 
 
 
