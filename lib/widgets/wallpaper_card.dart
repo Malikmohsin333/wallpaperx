@@ -1,21 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../models/wallpaper.dart';
+
 class WallpaperCard extends StatelessWidget {
-  final Map<String, dynamic> photo;
+  final Wallpaper? wallpaper;
+  final Map<String, dynamic>? photo;
   final bool isDarkMode;
   final VoidCallback onTap;
 
   const WallpaperCard({
     super.key,
-    required this.photo,
+    this.wallpaper,
+    this.photo,
     required this.isDarkMode,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String imageUrl = photo['src']['medium'];
+    final String imageUrl =
+        wallpaper?.mediumUrl ?? photo!['src']['medium'] as String;
 
     return GestureDetector(
       onTap: onTap,

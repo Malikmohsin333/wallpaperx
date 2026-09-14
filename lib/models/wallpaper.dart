@@ -3,6 +3,7 @@ class Wallpaper {
   final String photographer;
   final String originalUrl;
   final String largeUrl;
+  final String mediumUrl;
   final String portraitUrl;
 
   Wallpaper({
@@ -10,6 +11,7 @@ class Wallpaper {
     required this.photographer,
     required this.originalUrl,
     required this.largeUrl,
+    required this.mediumUrl,
     required this.portraitUrl,
   });
 
@@ -21,6 +23,7 @@ class Wallpaper {
       photographer: json['photographer'] as String,
       originalUrl: src['original'] as String,
       largeUrl: src['large'] as String,
+      mediumUrl: src['medium'] as String,
       portraitUrl: src['portrait'] as String,
     );
   }
