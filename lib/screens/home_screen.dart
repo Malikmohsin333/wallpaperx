@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../widgets/shimmer_loading_grid.dart';
 import '../widgets/wallpaper_card.dart';
 import '../state/theme_provider.dart';
+import '../state/wallpaper_provider.dart';
 import 'detail_screen.dart';
 import 'search_results_screen.dart';
 import 'favorites_screen.dart';
@@ -40,6 +41,9 @@ class _HomeScreenState extends State<HomeScreen>
   late Animation<double> _greetingAnimation;
 
   // FIX: getter to access isDarkMode from context where needed
+  WallpaperProvider get wallpaperProvider =>
+    Provider.of<WallpaperProvider>(context, listen: false);
+
   bool get isDarkMode =>
       Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
