@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/wallpaper.dart';
 import '../widgets/animated_message.dart';
 import '../widgets/wallpaper_option.dart';
+import '../widgets/detail_action_button.dart';
 import '../services/image_download_service.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -430,19 +431,19 @@ class _DetailScreenState extends State<DetailScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildActionButton(
+                DetailActionButton(
                   icon: Icons.download,
                   label: 'Download',
                   onTap: () => _saveImage(context, imageUrl),
                   isDarkMode: isDarkMode,
                 ),
-                _buildActionButton(
+                DetailActionButton(
                   icon: Icons.share,
                   label: 'Share',
                   onTap: () => _shareWallpaper(imageUrl),
                   isDarkMode: isDarkMode,
                 ),
-                _buildActionButton(
+                DetailActionButton(
                   icon: Icons.wallpaper,
                   label: isSettingWallpaper ? 'Setting...' : 'Set as',
                   onTap: isSettingWallpaper
@@ -461,51 +462,5 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Widget _buildActionButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback? onTap,
-    required bool isDarkMode,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              color: isDarkMode ? Colors.white : Colors.black,
-              size: 28,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
