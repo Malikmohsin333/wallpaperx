@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 
 import '../models/wallpaper.dart';
@@ -7,7 +8,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'detail_screen.dart';
 
 class FavoritesScreen extends StatelessWidget {
-  const FavoritesScreen({super.key});
+  final BaseCacheManager? cacheManager;
+
+  const FavoritesScreen({super.key, this.cacheManager});
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +96,7 @@ class FavoritesScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   child: CachedNetworkImage(
                     imageUrl: imageUrl,
+                    cacheManager: cacheManager,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Container(
                       color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
@@ -112,6 +116,7 @@ class FavoritesScreen extends StatelessWidget {
     );
   }
 }
+
 
 
 
