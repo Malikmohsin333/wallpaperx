@@ -265,12 +265,14 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _shareApp() {
-    Share.share(
-      'Check out WallpaperX - The best HD wallpaper app!\n\n'
-      'Download now: https://play.google.com/store/apps/details?id=com.example.wallpaperx',
+    SharePlus.instance.share(
+      ShareParams(
+        text:
+            'Check out WallpaperX - The best HD wallpaper app!\n\n'
+            'Download now: https://play.google.com/store/apps/details?id=com.example.wallpaperx',
+      ),
     );
   }
-
   String _getGreeting() {
     return 'Welcome Back';
   }
