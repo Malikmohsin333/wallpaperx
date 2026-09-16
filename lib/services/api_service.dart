@@ -4,7 +4,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/wallpaper.dart';
 
 class ApiService {
-  final Dio _dio = Dio();
+  final Dio _dio;
+
+  ApiService({Dio? dio}) : _dio = dio ?? Dio();
 
   String get _apiKey => dotenv.env['PEXELS_API_KEY'] ?? '';
 
@@ -114,3 +116,4 @@ class ApiService {
         .toList();
   }
 }
+
