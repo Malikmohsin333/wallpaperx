@@ -11,7 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.6
   dio: ^5.3.0
   cached_network_image: ^3.2.3
   provider: ^6.1.1
