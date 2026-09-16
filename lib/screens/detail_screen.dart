@@ -215,7 +215,7 @@ class _DetailScreenState extends State<DetailScreen> {
       await file.writeAsBytes(bytes);
 
       const playStoreLink =
-          'https://play.google.com/store/apps/details?id=com.example.wallpaperx';
+          'https://play.google.com/store/apps/details?id=com.mohsin.wallpaperx';
 
       await SharePlus.instance.share(
         ShareParams(
@@ -464,6 +464,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
 }
+
 
 
 

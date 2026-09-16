@@ -19,7 +19,7 @@ class RateDialog extends StatelessWidget {
     await prefs.setBool('has_rated', true);
 
     const url =
-        'https://play.google.com/store/apps/details?id=com.example.wallpaperx';
+        'https://play.google.com/store/apps/details?id=com.mohsin.wallpaperx';
 
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
@@ -53,3 +53,4 @@ class RateDialog extends StatelessWidget {
     );
   }
 }
+

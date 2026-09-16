@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen>
       ShareParams(
         text:
             'Check out WallpaperX - The best HD wallpaper app!\n\n'
-            'Download now: https://play.google.com/store/apps/details?id=com.example.wallpaperx',
+            'Download now: https://play.google.com/store/apps/details?id=com.mohsin.wallpaperx',
       ),
     );
   }
@@ -901,6 +901,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
