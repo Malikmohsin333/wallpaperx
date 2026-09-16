@@ -14,7 +14,7 @@ plugins {
 }
 android {
     namespace = "com.mohsin.wallpaperx"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
