@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/wallpaper.dart';
 import '../widgets/animated_message.dart';
+import '../widgets/wallpaper_option.dart';
 import '../services/image_download_service.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -340,7 +341,7 @@ class _DetailScreenState extends State<DetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildWallpaperOption(
+                WallpaperOption(
                   icon: Icons.home,
                   label: 'Home Screen',
                   onTap: () {
@@ -349,7 +350,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   },
                   isDarkMode: isDarkMode,
                 ),
-                _buildWallpaperOption(
+                WallpaperOption(
                   icon: Icons.lock,
                   label: 'Lock Screen',
                   onTap: () {
@@ -358,7 +359,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   },
                   isDarkMode: isDarkMode,
                 ),
-                _buildWallpaperOption(
+                WallpaperOption(
                   icon: Icons.home_work,
                   label: 'Both',
                   onTap: () {
@@ -372,40 +373,6 @@ class _DetailScreenState extends State<DetailScreen> {
             const SizedBox(height: 20),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildWallpaperOption({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    required bool isDarkMode,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Color(0xFF6366F1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 30,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -528,6 +495,9 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
+
+
+
 
 
 
