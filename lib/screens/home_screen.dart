@@ -741,11 +741,6 @@ class _HomeScreenState extends State<HomeScreen>
                           color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
-                      //  TextButton(
-                      //   onPressed: _showAllCategories,
-                      //  child: const Text('See All',
-                      //   style: TextStyle(color: Color(0xFF6366F1))),
-                      //),
                     ],
                   ),
                 ),
