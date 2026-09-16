@@ -217,12 +217,13 @@ class _DetailScreenState extends State<DetailScreen> {
       const playStoreLink =
           'https://play.google.com/store/apps/details?id=com.example.wallpaperx';
 
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        text:
-            'Check out this amazing wallpaper from WallpaperX!\n\nDownload more: $playStoreLink',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path)],
+          text:
+              'Check out this amazing wallpaper from WallpaperX!\n\nDownload more: $playStoreLink',
+        ),
       );
-
       await file.delete();
 
       _showAnimatedMessage(
@@ -463,4 +464,6 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
 }
+
+
 
