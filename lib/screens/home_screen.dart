@@ -869,8 +869,6 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  // FIX: pass isDarkMode from build context using Theme
-
   Widget _buildWallpapersGrid(bool isDarkMode) {
     return WallpaperGrid(
       wallpapers: wallpapers,
@@ -901,6 +899,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 
 
 
