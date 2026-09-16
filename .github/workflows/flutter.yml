@@ -21,6 +21,11 @@ jobs:
         with:
           channel: stable
 
+      - name: Create environment file
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: echo "PEXELS_API_KEY=$PEXELS_API_KEY" > .env
+
       - name: Install dependencies
         run: flutter pub get
 
