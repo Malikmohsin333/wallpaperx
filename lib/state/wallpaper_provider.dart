@@ -1,10 +1,14 @@
+
 import 'package:flutter/foundation.dart';
 
 import '../models/wallpaper.dart';
 import '../services/api_service.dart';
 
 class WallpaperProvider extends ChangeNotifier {
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
+
+  WallpaperProvider({ApiService? apiService})
+      : _apiService = apiService ?? ApiService();
 
   final List<Wallpaper> _wallpapers = [];
 

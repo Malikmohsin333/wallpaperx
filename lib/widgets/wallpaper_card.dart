@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import '../models/wallpaper.dart';
 
@@ -7,12 +8,14 @@ class WallpaperCard extends StatelessWidget {
   final Wallpaper wallpaper;
   final bool isDarkMode;
   final VoidCallback onTap;
+  final BaseCacheManager? cacheManager;
 
   const WallpaperCard({
     super.key,
     required this.wallpaper,
     required this.isDarkMode,
     required this.onTap,
+    this.cacheManager,
   });
 
   @override
@@ -36,6 +39,7 @@ class WallpaperCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           child: CachedNetworkImage(
             imageUrl: imageUrl,
+            cacheManager: cacheManager,
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(
               color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
@@ -53,4 +57,3 @@ class WallpaperCard extends StatelessWidget {
     );
   }
 }
-
