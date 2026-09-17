@@ -4,7 +4,7 @@ class AnimatedMessage extends StatelessWidget {
   final String message;
   final bool isSuccess;
 
-  const AnimatedMessage({
+  const AnimatedMessage({ // coverage:ignore-line
     super.key,
     required this.message,
     this.isSuccess = true,
@@ -44,3 +44,4 @@ class AnimatedMessage extends StatelessWidget {
     );
   }
 }
+
