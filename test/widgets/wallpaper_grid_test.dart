@@ -90,6 +90,42 @@ void main() {
   );
 
   testWidgets(
+    'WallpaperGrid opens detail screen when a wallpaper is tapped',
+    (tester) async {
+      var wallpaperTapped = false;
+
+      await tester.binding.setSurfaceSize(const Size(400, 900));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: WallpaperGrid(
+            wallpapers: [_wallpaper(1)],
+            isDarkMode: true,
+            isLoading: false,
+            errorMessage: null,
+            onRetry: () {},
+            onWallpaperTap: (_) async {
+              wallpaperTapped = true;
+            },
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(find.byType(WallpaperCard), findsOneWidget);
+
+      await tester.tap(find.byType(WallpaperCard));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(wallpaperTapped, isTrue);
+
+      await tester.binding.setSurfaceSize(null);
+    },
+  );
+
+  testWidgets(
     'WallpaperGrid displays wallpaper cards',
     (tester) async {
       final wallpapers = [
@@ -117,4 +153,5 @@ void main() {
     },
   );
 }
+
 
