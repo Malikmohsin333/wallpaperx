@@ -75,4 +75,24 @@ void main() {
       expect(selectedCategory, 'Cars');
     },
   );
+  testWidgets(
+    'AllCategoriesScreen back button pops the screen',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AllCategoriesScreen(
+            categories: categories,
+            onCategoryTap: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.text('All Categories'), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      expect(find.text('All Categories'), findsNothing);
+    },
+  );
 }
