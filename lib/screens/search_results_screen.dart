@@ -7,10 +7,12 @@ import '../services/api_service.dart';
 
 class SearchResultsScreen extends StatefulWidget {
   final String searchQuery;
+  final ApiService? apiService;
 
   const SearchResultsScreen({
     super.key,
     required this.searchQuery,
+    this.apiService,
   });
 
   @override
@@ -25,12 +27,13 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   int currentPage = 1;
   bool hasMore = true;
 
-  final ApiService _apiService = ApiService();
-    final ScrollController _scrollController = ScrollController();
+  late final ApiService _apiService;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _apiService = widget.apiService ?? ApiService();
     performSearch();
     _scrollController.addListener(_onScroll);
   }
@@ -339,6 +342,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
     );
   }
 }
+
 
 
 
