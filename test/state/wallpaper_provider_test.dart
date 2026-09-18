@@ -273,4 +273,14 @@ void main() {
     expect(provider.wallpapers, isEmpty);
     expect(provider.hasMore, isFalse);
   });
+  test('uses default ApiService when none is provided', () {
+    final defaultProvider = WallpaperProvider();
+
+    expect(defaultProvider.wallpapers, isEmpty);
+    expect(defaultProvider.isLoading, isFalse);
+    expect(defaultProvider.hasMore, isTrue);
+    expect(defaultProvider.error, isNull);
+
+    defaultProvider.dispose();
+  });
 }
