@@ -35,8 +35,7 @@ class ShimmerLoadingGrid extends StatelessWidget {
 }
 
 class LoadMoreShimmer extends StatelessWidget {
-  final bool isDarkMode;
-  const LoadMoreShimmer({super.key, required this.isDarkMode});
+  const LoadMoreShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,3 +54,4 @@ class LoadMoreShimmer extends StatelessWidget {
     );
   }
 }
+
