@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
+
+
 import 'package:wallpaperx/models/wallpaper.dart';
 import 'package:wallpaperx/services/api_service.dart';
 
@@ -276,5 +278,119 @@ void main() {
     final wallpapers = await apiService.getCuratedWallpapers();
 
     expect(wallpapers, isEmpty);
-  });}
+  });
+  test('getWallpapers uses the curated endpoint for Trending category', () async {
+    final dio = Dio();
+    final adapter = DioAdapter(dio: dio);
+    final apiService = ApiService(dio: dio);
 
+    adapter.onGet(
+      'https://api.pexels.com/v1/curated?per_page=15&page=2&orientation=portrait',
+      (server) => server.reply(
+        200,
+        {
+          'photos': [
+            {
+              'id': 601,
+              'photographer': 'Trending Photographer',
+              'src': {
+                'original': 'trending-original',
+                'large': 'trending-large',
+                'medium': 'trending-medium',
+                'portrait': 'trending-portrait',
+              },
+            },
+          ],
+        },
+      ),
+    );
+
+    final wallpapers = await apiService.getWallpapers(
+      category: 'Trending',
+      page: 2,
+      perPage: 15,
+    );
+
+    expect(wallpapers, hasLength(1));
+    expect(wallpapers.first.id, 601);
+    expect(wallpapers.first.photographer, 'Trending Photographer');
+  });
+
+  test('getWallpapers uses the offset curated endpoint for New category', () async {
+    final dio = Dio();
+    final adapter = DioAdapter(dio: dio);
+    final apiService = ApiService(dio: dio);
+
+    adapter.onGet(
+      'https://api.pexels.com/v1/curated?per_page=15&page=22&orientation=portrait',
+      (server) => server.reply(
+        200,
+        {
+          'photos': [
+            {
+              'id': 701,
+              'photographer': 'New Photographer',
+              'src': {
+                'original': 'new-original',
+                'large': 'new-large',
+                'medium': 'new-medium',
+                'portrait': 'new-portrait',
+              },
+            },
+          ],
+        },
+      ),
+    );
+
+    final wallpapers = await apiService.getWallpapers(
+      category: 'New',
+      page: 2,
+      perPage: 15,
+    );
+
+    expect(wallpapers, hasLength(1));
+    expect(wallpapers.first.id, 701);
+    expect(wallpapers.first.photographer, 'New Photographer');
+  });
+
+  test('getWallpapers uses a random curated page for Random category', () async {
+    final dio = Dio();
+    final adapter = DioAdapter(
+      dio: dio,
+      matcher: const UrlRequestMatcher(),
+    );
+    final apiService = ApiService(dio: dio);
+
+    adapter.onGet(
+      RegExp(r'https://api\.pexels\.com/v1/curated.*'),
+      (server) => server.reply(
+        200,
+        {
+          'photos': [
+            {
+              'id': 801,
+              'photographer': 'Random Photographer',
+              'src': {
+                'original': 'random-original',
+                'large': 'random-large',
+                'medium': 'random-medium',
+                'portrait': 'random-portrait',
+              },
+            },
+          ],
+        },
+      ),
+
+    );
+
+    final wallpapers = await apiService.getWallpapers(
+      category: 'Random',
+      page: 3,
+      perPage: 15,
+    );
+
+    expect(wallpapers, hasLength(1));
+    expect(wallpapers.first.id, 801);
+    expect(wallpapers.first.photographer, 'Random Photographer');
+  });
+}
