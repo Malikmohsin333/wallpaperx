@@ -44,11 +44,10 @@ class _HomeScreenState extends State<HomeScreen>
 
   // FIX: getter to access isDarkMode from context where needed
   WallpaperProvider get wallpaperProvider =>
-    Provider.of<WallpaperProvider>(context, listen: false);
+      Provider.of<WallpaperProvider>(context, listen: false);
 
   bool get isDarkMode =>
       Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
-
 
   final List<Map<String, dynamic>> mainCategories = [
     {'name': 'Curated', 'icon': Icons.trending_up, 'color': 0xFF6366F1},
@@ -201,6 +200,7 @@ class _HomeScreenState extends State<HomeScreen>
       recentlyViewed = loadedWallpapers.take(20).toList();
     });
   }
+
   Future<void> _addToRecentlyViewed(Wallpaper wallpaper) async {
     final recentlyViewedBox = Hive.box('recently_viewed');
     final id = wallpaper.id.toString();
@@ -229,6 +229,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     await _loadRecentlyViewed();
   }
+
   Future<void> _checkAndShowRateDialog() async {
     final prefs = await SharedPreferences.getInstance();
     final downloadCount = prefs.getInt('download_count') ?? 0;
@@ -246,6 +247,7 @@ class _HomeScreenState extends State<HomeScreen>
       builder: (_) => const RateDialog(),
     );
   }
+
   Future<void> _clearCache() async {
     try {
       final tempDir = await getTemporaryDirectory();
@@ -267,12 +269,12 @@ class _HomeScreenState extends State<HomeScreen>
   void _shareApp() {
     SharePlus.instance.share(
       ShareParams(
-        text:
-            'Check out WallpaperX - The best HD wallpaper app!\n\n'
+        text: 'Check out WallpaperX - The best HD wallpaper app!\n\n'
             'Download now: https://play.google.com/store/apps/details?id=com.mohsin.wallpaperx',
       ),
     );
   }
+
   String _getGreeting() {
     return 'Welcome Back';
   }
@@ -313,7 +315,8 @@ class _HomeScreenState extends State<HomeScreen>
           hasMore = wallpaperProvider.hasMore;
           errorMessage = wallpaperProvider.error;
         });
-      }    }
+      }
+    }
   }
 
   void _onScroll() {
@@ -345,6 +348,7 @@ class _HomeScreenState extends State<HomeScreen>
       });
     }
   }
+
   void _onSearch(String query) {
     if (query.trim().isNotEmpty && isConnected) {
       Navigator.push(
@@ -399,6 +403,7 @@ class _HomeScreenState extends State<HomeScreen>
       );
     }
   }
+
   void _showSettingsMenu() {
     showModalBottomSheet(
       context: context,
@@ -414,6 +419,7 @@ class _HomeScreenState extends State<HomeScreen>
       ),
     );
   }
+
   void _showAnimatedMessage(String message, {bool isSuccess = true}) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
@@ -429,6 +435,7 @@ class _HomeScreenState extends State<HomeScreen>
       () => overlayEntry.remove(),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -539,7 +546,8 @@ class _HomeScreenState extends State<HomeScreen>
                         blendMode: BlendMode.dstIn,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.only(right: 32),
+                          clipBehavior: Clip.none,
+                          padding: const EdgeInsets.only(left: 8, right: 32),
                           itemCount: mainCategories.length,
                           itemBuilder: (context, index) {
                             final category = mainCategories[index];
@@ -844,17 +852,17 @@ class _HomeScreenState extends State<HomeScreen>
                 isConnected
                     ? _buildWallpapersGrid(isDarkMode)
                     : NoInternetMessage(
-    isDarkMode: isDarkMode,
-    onRetry: _checkInternetAndLoad,
-    onViewFavorites: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const FavoritesScreen(),
-        ),
-      );
-    },
-  ),
+                        isDarkMode: isDarkMode,
+                        onRetry: _checkInternetAndLoad,
+                        onViewFavorites: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FavoritesScreen(),
+                            ),
+                          );
+                        },
+                      ),
 
                 if (isLoadingMore && isConnected) const LoadingDots(),
                 const SizedBox(height: 80),
@@ -896,44 +904,3 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

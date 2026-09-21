@@ -17,10 +17,14 @@ import '../services/image_download_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final Wallpaper photo;
+  final ImageDownloadService? imageDownloadService;
+  final SharePlus? sharePlus;
 
   const DetailScreen({
     super.key,
     required this.photo,
+    this.imageDownloadService,
+    this.sharePlus,
   });
 
   @override
@@ -33,10 +37,20 @@ class WallpaperManager {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  final ImageDownloadService _imageDownloadService = ImageDownloadService();
+  late final ImageDownloadService _imageDownloadService;
+  late final SharePlus _sharePlus;
   late Box favoritesBox;
   bool isFavorite = false;
   bool isSettingWallpaper = false;
+  @override
+  void initState() {
+    super.initState();
+    _imageDownloadService =
+        widget.imageDownloadService ?? ImageDownloadService();
+    _sharePlus = widget.sharePlus ?? SharePlus.instance;
+    favoritesBox = Hive.box('favorites');
+    isFavorite = favoritesBox.containsKey(widget.photo.id.toString());
+  }
 
   Future<bool> _requestPermission() async {
     if (await Permission.photos.isGranted) return true;
@@ -101,6 +115,7 @@ class _DetailScreenState extends State<DetailScreen> {
       () => overlayEntry.remove(),
     );
   }
+
   void _toggleFavorite() {
     final id = widget.photo.id.toString();
 
@@ -217,7 +232,7 @@ class _DetailScreenState extends State<DetailScreen> {
       const playStoreLink =
           'https://play.google.com/store/apps/details?id=com.mohsin.wallpaperx';
 
-      await SharePlus.instance.share(
+      await _sharePlus.share(
         ShareParams(
           files: [XFile(file.path)],
           text:
@@ -462,9 +477,5 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
     );
   }
-
 }
-
-
-
 
