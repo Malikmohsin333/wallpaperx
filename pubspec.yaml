@@ -2,8 +2,7 @@ name: wallpaperx
 description: "HD Wallpaper App - WallpaperX"
 publish_to: 'none'
 
-version: 1.0.0+1
-
+version: 1.0.4+6
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
@@ -26,6 +25,7 @@ dependencies:
   shared_preferences_android: 2.4.28
   url_launcher_android: 6.3.33
   flutter_cache_manager: ^3.4.3
+  device_info_plus: ^13.2.0
 
 dev_dependencies:
   flutter_test:
@@ -41,6 +41,7 @@ dev_dependencies:
   permission_handler_platform_interface: 4.4.1
   share_plus_platform_interface: 7.2.0
   path_provider_platform_interface: 2.1.3
+  connectivity_plus_platform_interface: ^2.1.0
 flutter:
   uses-material-design: true
   assets:

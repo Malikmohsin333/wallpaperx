@@ -1,7 +1,8 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -53,10 +54,13 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future<bool> _requestPermission() async {
-    if (await Permission.photos.isGranted) return true;
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt >= 29) {
+        return true;
+      }
+    }
     if (await Permission.storage.isGranted) return true;
-
-    if (await Permission.photos.request().isGranted) return true;
     if (await Permission.storage.request().isGranted) return true;
 
     if (!mounted) return false;
@@ -478,4 +482,3 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
-
