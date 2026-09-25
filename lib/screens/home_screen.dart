@@ -260,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to clear cache')),
+          SnackBar(content: Text('Failed to clear cache: ')),
         );
       }
     }
@@ -904,3 +904,4 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
