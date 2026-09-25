@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:wallpaperx/models/wallpaper.dart';
 import 'package:wallpaperx/widgets/shimmer_loading_grid.dart';
@@ -18,6 +21,11 @@ Wallpaper _wallpaper(int id) {
 }
 
 void main() {
+  setUpAll(() async {
+    final tempDir = await Directory.systemTemp.createTemp('wallpaperx_grid_test_');
+    Hive.init(tempDir.path);
+    await Hive.openBox('favorites');
+  });
   testWidgets(
     'WallpaperGrid shows shimmer while loading with no wallpapers',
     (tester) async {

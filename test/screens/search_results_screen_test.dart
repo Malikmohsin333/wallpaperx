@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -58,6 +61,11 @@ Widget _app({
 }
 
 void main() {
+  setUpAll(() async {
+    final tempDir = await Directory.systemTemp.createTemp('wallpaperx_search_test_');
+    Hive.init(tempDir.path);
+    await Hive.openBox('favorites');
+  });
   testWidgets('CustomSearchDelegate actions, leading and results',
       (tester) async {
     final delegate = CustomSearchDelegate();
