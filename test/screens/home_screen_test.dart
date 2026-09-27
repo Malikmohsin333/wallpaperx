@@ -15,6 +15,7 @@ import 'package:wallpaperx/services/api_service.dart';
 import 'package:wallpaperx/state/theme_provider.dart';
 import 'package:wallpaperx/state/wallpaper_provider.dart';
 import 'package:wallpaperx/screens/home_screen.dart';
+import 'package:wallpaperx/widgets/wallpaper_card.dart';
 
 class _FakeConnectivityPlatform extends ConnectivityPlatform {
   final List<ConnectivityResult> result;
@@ -75,7 +76,6 @@ void main() {
     SharedPreferences.setMockInitialValues({});
 
     await Hive.box('favorites').clear();
-    await Hive.box('recently_viewed').clear();
 
     ConnectivityPlatform.instance = _FakeConnectivityPlatform(
       result: const [ConnectivityResult.wifi],
@@ -135,12 +135,68 @@ void main() {
     expect(find.text('Categories'), findsOneWidget);
     expect(find.text('Trending Now'), findsOneWidget);
   });
+  testWidgets('HomeScreen adds tapped wallpaper to recently viewed',
+      (tester) async {
+    dioAdapter.onGet(
+      'https://api.pexels.com/v1/curated?per_page=15&page=1&orientation=portrait',
+      (server) => server.reply(
+        200,
+        {
+          'photos': [
+            _photo(101, 'Recent Photographer'),
+          ],
+        },
+      ),
+    );
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<WallpaperProvider>.value(
+            value: provider,
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ThemeProvider(isDarkMode: true),
+          ),
+        ],
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 800));
+
+    final card = find.byType(WallpaperCard).first;
+    expect(card, findsOneWidget);
+
+    await tester.ensureVisible(card);
+    await tester.pump();
+
+    await tester.tap(card);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+
+    final recentlyViewedBox = Hive.box('recently_viewed');
+    expect(recentlyViewedBox.get('101'), isNotNull);
+    expect(
+      recentlyViewedBox.get('101')['photographer'],
+      'Recent Photographer',
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+
+    await tester.pump(const Duration(milliseconds: 500));
+  });
   testWidgets('HomeScreen shows no internet state when offline',
       (tester) async {
+
     ConnectivityPlatform.instance = _FakeConnectivityPlatform(
       result: const [ConnectivityResult.none],
     );
-
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -259,10 +315,10 @@ void main() {
 
   testWidgets('HomeScreen shows offline message when search is tapped offline',
       (tester) async {
+
     ConnectivityPlatform.instance = _FakeConnectivityPlatform(
       result: const [ConnectivityResult.none],
     );
-
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -294,10 +350,10 @@ void main() {
 
   testWidgets('HomeScreen opens settings menu',
       (tester) async {
+
     ConnectivityPlatform.instance = _FakeConnectivityPlatform(
       result: const [ConnectivityResult.none],
     );
-
     await tester.pumpWidget(
       MultiProvider(
         providers: [
