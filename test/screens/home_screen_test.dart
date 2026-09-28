@@ -94,6 +94,50 @@ void main() {
       await testTempDir.delete(recursive: true);
     }
   });
+  testWidgets('HomeScreen shows rate dialog after five downloads',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'download_count': 5,
+      'has_rated': false,
+    });
+
+    dioAdapter.onGet(
+      'https://api.pexels.com/v1/curated?per_page=15&page=1&orientation=portrait',
+      (server) => server.reply(
+        200,
+        {
+          'photos': [
+            _photo(1, 'Rate Test Photographer'),
+          ],
+        },
+      ),
+    );
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<WallpaperProvider>.value(
+            value: provider,
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ThemeProvider(isDarkMode: true),
+          ),
+        ],
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Enjoying WallpaperX?'), findsOneWidget);
+    expect(
+      find.text('Please rate us on the Play Store and help us improve!'),
+      findsOneWidget,
+    );
+  });
   testWidgets('HomeScreen renders and loads wallpapers online',
       (tester) async {
     dioAdapter.onGet(
@@ -185,6 +229,7 @@ void main() {
       recentlyViewedBox.get('101')['photographer'],
       'Recent Photographer',
     );
+
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
