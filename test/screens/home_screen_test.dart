@@ -427,6 +427,50 @@ void main() {
   });
 
 
+  testWidgets('HomeScreen shows error when clearing cache fails',
+      (tester) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/path_provider'),
+      (MethodCall methodCall) async {
+        throw Exception('Test cache failure');
+      },
+    );
+
+    ConnectivityPlatform.instance = _FakeConnectivityPlatform(
+      result: const [ConnectivityResult.none],
+    );
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<WallpaperProvider>.value(
+            value: provider,
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ThemeProvider(isDarkMode: true),
+          ),
+        ],
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 800));
+
+    await tester.tap(find.byIcon(Icons.settings));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Clear Cache'), findsOneWidget);
+
+    await tester.tap(find.text('Clear Cache'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Failed to clear cache: '), findsOneWidget);
+  });
   testWidgets('HomeScreen clears cache from settings',
       (tester) async {
     tester.view.physicalSize = const Size(800, 1200);
