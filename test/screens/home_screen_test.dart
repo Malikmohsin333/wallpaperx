@@ -577,4 +577,38 @@ void main() {
     expect(find.text('Nature'), findsOneWidget);
     expect(find.text('40+ Wallpapers'), findsOneWidget);
   });
+
+  testWidgets('HomeScreen shows offline message when category is tapped offline',
+      (tester) async {
+    ConnectivityPlatform.instance = _FakeConnectivityPlatform(
+      result: const [ConnectivityResult.none],
+    );
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<WallpaperProvider>.value(
+            value: provider,
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ThemeProvider(isDarkMode: true),
+          ),
+        ],
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 800));
+
+    await tester.tap(find.text('Nature'));
+    await tester.pump();
+
+    expect(find.text('No internet connection'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+  });
 }
