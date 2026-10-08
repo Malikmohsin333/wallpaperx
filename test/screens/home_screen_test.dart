@@ -517,14 +517,64 @@ void main() {
     await tester.pump();
   });
 
+
+  testWidgets('HomeScreen shows count for secondary category',
+      (tester) async {
+    ConnectivityPlatform.instance = _FakeConnectivityPlatform(
+      result: const [ConnectivityResult.wifi],
+    );
+
+    dioAdapter.onGet(
+      'https://api.pexels.com/v1/curated?per_page=15&page=1&orientation=portrait',
+      (server) => server.reply(
+        200,
+        {
+          'photos': [
+            _photo(1, 'Nature Photographer'),
+          ],
+        },
+      ),
+    );
+
+    dioAdapter.onGet(
+      'https://api.pexels.com/v1/search?query=Nature&per_page=15&page=1',
+      (server) => server.reply(
+        200,
+        {
+          'photos': [
+            _photo(2, 'Nature Photographer'),
+          ],
+        },
+      ),
+    );
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<WallpaperProvider>.value(
+            value: provider,
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ThemeProvider(isDarkMode: true),
+          ),
+        ],
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Nature'), findsOneWidget);
+
+    await tester.tap(find.text('Nature'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1000));
+
+    expect(find.text('Nature'), findsOneWidget);
+    expect(find.text('40+ Wallpapers'), findsOneWidget);
+  });
 }
-
-
-
-
-
-
-
-
-
-
