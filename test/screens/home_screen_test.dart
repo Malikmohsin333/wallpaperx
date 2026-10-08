@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wallpaperx/screens/favorites_screen.dart';
 
 import 'package:wallpaperx/services/api_service.dart';
 import 'package:wallpaperx/state/theme_provider.dart';
@@ -610,5 +611,34 @@ void main() {
 
     await tester.pump(const Duration(seconds: 2));
     await tester.pump();
+  });
+
+  testWidgets('HomeScreen opens favorites screen', (tester) async {
+    ConnectivityPlatform.instance = _FakeConnectivityPlatform(
+      result: const [ConnectivityResult.none],
+    );
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<WallpaperProvider>.value(value: provider),
+          ChangeNotifierProvider(
+            create: (_) => ThemeProvider(isDarkMode: true),
+          ),
+        ],
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 800));
+
+    await tester.tap(find.descendant(of: find.byType(AppBar), matching: find.byIcon(Icons.favorite_border)));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.byType(FavoritesScreen), findsOneWidget);
   });
 }

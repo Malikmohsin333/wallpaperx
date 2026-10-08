@@ -22,7 +22,9 @@ import 'search_results_screen.dart';
 import 'favorites_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final SharePlus? sharePlus;
+
+  const HomeScreen({super.key, this.sharePlus});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -267,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _shareApp() {
-    SharePlus.instance.share(
+    (widget.sharePlus ?? SharePlus.instance).share(
       ShareParams(
         text: 'Check out WallpaperX - The best HD wallpaper app!\n\n'
             'Download now: https://play.google.com/store/apps/details?id=com.mohsin.wallpaperx',
