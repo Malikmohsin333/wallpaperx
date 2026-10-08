@@ -641,4 +641,36 @@ void main() {
 
     expect(find.byType(FavoritesScreen), findsOneWidget);
   });
+
+  testWidgets('HomeScreen refresh checks internet connection', (tester) async {
+    ConnectivityPlatform.instance = _FakeConnectivityPlatform(
+      result: const [ConnectivityResult.none],
+    );
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<WallpaperProvider>.value(value: provider),
+          ChangeNotifierProvider(
+            create: (_) => ThemeProvider(isDarkMode: true),
+          ),
+        ],
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 800));
+
+    final refreshIndicator = tester.widget<RefreshIndicator>(
+      find.byType(RefreshIndicator),
+    );
+
+    await refreshIndicator.onRefresh();
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
 }
